@@ -30,7 +30,7 @@ const handleLogin = async () => {
       if (querySnapshot.empty) {
         throw new Error('Tên đăng nhập không tồn tại!')
       }
-      emailToSignIn = querySnapshot.docs[0].data().email
+      emailToSignIn = querySnapshot.docs[0]?.data()?.email
     }
 
     // 2. Thực hiện đăng nhập chính thức

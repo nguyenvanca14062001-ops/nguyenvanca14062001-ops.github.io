@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// Nhận các thông tin từ component cha
 defineProps<{ 
   isLoggedIn: boolean; 
   isMenuOpen: boolean; 
@@ -6,10 +7,19 @@ defineProps<{
   userBalance: number 
 }>();
 
+// Khai báo các sự kiện gửi ngược lại cho component cha
 const emit = defineEmits(['toggleMenu', 'logout', 'routerPush', 'requireAuth', 'scrollToHistory', 'contactSupport']);
 
 const handleHistoryClick = () => {
   emit('scrollToHistory');
+}
+
+/**
+ * HÀM SỬA LỖI: TypeScript không cho dùng window.open trực tiếp trong template.
+ * Tao đã tách nó ra thành hàm riêng để Build không bị lỗi đỏ.
+ */
+const openZaloGroup = () => {
+  window.open('https://zalo.me/g/xxxxxx', '_blank');
 }
 </script>
 
@@ -22,7 +32,7 @@ const handleHistoryClick = () => {
     isMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
   ]">
     
-    <!-- PHẦN 1: LOGO AREA (PHÔNG THẲNG, DÀY) -->
+    <!-- PHẦN 1: LOGO AREA -->
     <div class="py-8 px-4 flex flex-col items-center justify-center border-b border-slate-800/50 shrink-0">
       <div @click="emit('routerPush', '/')" class="text-center cursor-pointer hover:scale-105 transition-transform">
         <h1 class="text-white text-3xl font-black tracking-tighter drop-shadow-[0_0_15px_rgba(37,99,235,0.4)] uppercase">
@@ -34,7 +44,6 @@ const handleHistoryClick = () => {
 
     <!-- PHẦN 2: KHU VỰC TÀI KHOẢN -->
     <div class="p-5 border-b border-slate-800/50 bg-[#0d121f]/30">
-      <!-- HIỂN THỊ KHI ĐÃ ĐĂNG NHẬP -->
       <div v-if="isLoggedIn" class="flex items-center gap-4 bg-[#1a233a] p-4 rounded-[20px] border border-blue-500/20 shadow-inner group hover:border-blue-500/40 transition-all">
         <div class="w-12 h-12 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white text-xl font-black shadow-lg shrink-0 group-hover:scale-105 transition-transform">
           {{ username.charAt(0).toUpperCase() }}
@@ -46,9 +55,8 @@ const handleHistoryClick = () => {
         </div>
       </div>
 
-      <!-- HIỂN THỊ KHI CHƯA ĐĂNG NHẬP -->
       <div v-else>
-        <button @click="emit('routerPush', '/login')" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-5 rounded-[22px] text-[11px] font-black uppercase transition-all shadow-[0_10px_25px_rgba(37,99,235,0.4)] active:scale-95 flex items-center justify-center gap-3">
+        <button @click="emit('routerPush', '/login')" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-5 rounded-[22px] text-[11px] font-black uppercase transition-all shadow-[0_10px_25_rgba(37,99,235,0.4)] active:scale-95 flex items-center justify-center gap-3">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
           ĐĂNG NHẬP / ĐĂNG KÝ
         </button>
@@ -122,7 +130,8 @@ const handleHistoryClick = () => {
           CHAT SUPPORT
         </button>
 
-        <button @click="window.open('https://zalo.me/g/xxxxxx', '_blank')" class="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-100 text-[#0068ff] py-3.5 rounded-[18px] text-[10px] font-black tracking-[1px] transition-all shadow-lg active:scale-95 uppercase">
+        <!-- SỬA TẠI ĐÂY: Dùng @click="openZaloGroup" thay cho window.open trực tiếp -->
+        <button @click="openZaloGroup" class="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-100 text-[#0068ff] py-3.5 rounded-[18px] text-[10px] font-black tracking-[1px] transition-all shadow-lg active:scale-95 uppercase">
           <div class="w-4 h-4 bg-[#0068ff] rounded-full flex items-center justify-center">
             <span class="text-white text-[8px] font-sans font-black">Z</span>
           </div>
@@ -134,7 +143,6 @@ const handleHistoryClick = () => {
 </template>
 
 <style scoped>
-/* Scrollbar mỏng, hiện đại */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
