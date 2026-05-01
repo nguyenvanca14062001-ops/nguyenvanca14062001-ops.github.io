@@ -6,6 +6,8 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // Thêm dòng base này vào để sửa lỗi đường dẫn trên GitHub Pages
+  base: '/', 
   plugins: [
     vue(),
     vueDevTools(),
