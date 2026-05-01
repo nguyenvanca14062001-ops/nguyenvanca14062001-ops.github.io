@@ -22,11 +22,12 @@ const routes = [
   { path: '/submit-report', component: SubmitReportView },
   { path: '/withdraw', component: WithdrawView },
   { path: '/job/:id', component: JobDetailView },
-  { path: '/admin', component: AdminView } // KIỂM TRA DÒNG NÀY: Phải là AdminView
+  { path: '/admin', component: AdminView }
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  // CHỖ NÀY LÀ MẤU CHỐT: Phải có BASE_URL để nó hiểu đường dẫn GitHub của mày
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes
 })
 

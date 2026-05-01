@@ -2,36 +2,32 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" href="favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TRUNG TÂM MMO PRO</title>
 
-    <!-- Nạp phông chữ Inter (Sans-serif hiện đại, cực kỳ sắc nét) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
-      /* Thiết lập phông chữ hệ thống */
       :root {
         font-family: 'Inter', system-ui, -apple-system, sans-serif;
       }
 
       body {
         margin: 0;
-        background-color: #090e17; /* Màu nền tối chuẩn MMO */
+        background-color: #090e17; 
         font-family: 'Inter', sans-serif !important;
         -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
         color: #f8fafc;
       }
 
-      /* QUAN TRỌNG: Ép toàn bộ chữ đứng thẳng, không nghiêng để giống ảnh mẫu */
+      /* Ép toàn bộ chữ đứng thẳng theo ý mày */
       * {
         font-style: normal !important;
       }
 
-      /* Tùy chỉnh thanh cuộn siêu mỏng */
       ::-webkit-scrollbar {
         width: 0px;
       }
@@ -39,7 +35,6 @@
   </head>
   <body>
     <div id="app"></div>
-    <!-- Đường dẫn main.ts của mày giữ nguyên -->
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
