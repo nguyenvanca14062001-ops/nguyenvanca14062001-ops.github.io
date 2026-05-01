@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Nhận Props từ file cha để hiển thị dữ liệu thực tế
+// Nhận dữ liệu từ App.vue
 defineProps<{ 
   username: string; 
   isLoggedIn: boolean; 
@@ -17,14 +17,14 @@ const userStats = [
   { label: 'THU NHẬP TUẦN NÀY', key: 'weekly', value: '0', unit: 'Đ', color: 'text-emerald-500', icon: '📈' }
 ];
 
-// DANH SÁCH 6 CÔNG VIỆC - ĐÃ FIX LỖI CHÍNH TẢ VÀ ĐỒNG BỘ MÀU VÀNG
+// Danh sách 6 công việc - Đã fix lỗi chính tả và làm sạch SVG
 const jobsData = [
-  { id: '01', n: 'APP CHỨNG KHOÁN', p: '150.000đ', d: 'Đăng ký & KYC nhận thưởng.', color: 'text-blue-400', svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline></svg>` },
-  { id: '02', n: 'GOOGLE MAP', p: '15.000đ', d: 'Đánh giá nhận thưởng ngay.', color: 'text-orange-400', svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path></svg>` },
-  { id: '03', n: 'NGÂN HÀNG MSB', p: '80.000đ', d: 'Mở tài khoản ngân hàng MSB.', color: 'text-emerald-400', svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><rect x="2" y="20" width="20" height="2"></rect><path d="M12 2L2 10h20L12 2z"></path></svg>` },
-  { id: '04', n: 'GIỚI THIỆU BẠN BÈ ', p: '100.000đ', d: 'Giới thiệu nhận quà giới hạn.', color: 'text-rose-400', svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46"></path></svg>` },
-  { id: '05', n: 'NGÂN HÀNG TPBANK', p: '90.000đ', d: 'Mở tài khoản TPBank.', color: 'text-purple-400', svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>` },
-  { id: '06', n: 'NGÂN HÀNG VPBANK', p: '100.000đ', d: 'Mở tài khoản VPBank.', color: 'text-green-400', svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>` }
+  { id: '01', n: 'APP CHỨNG KHOÁN', p: '150.000đ', d: 'Đăng ký & KYC nhận thưởng.', color: 'text-blue-400', svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline></svg>' },
+  { id: '02', n: 'GOOGLE MAP', p: '15.000đ', d: 'Đánh giá nhận thưởng ngay.', color: 'text-orange-400', svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path></svg>' },
+  { id: '03', n: 'NGÂN HÀNG MSB', p: '80.000đ', d: 'Mở tài khoản ngân hàng MSB.', color: 'text-emerald-400', svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><rect x="2" y="20" width="20" height="2"></rect><path d="M12 2L2 10h20L12 2z"></path></svg>' },
+  { id: '04', n: 'GIỚI THIỆU BẠN BÈ', p: '100.000đ', d: 'Giới thiệu nhận quà giới hạn.', color: 'text-rose-400', svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46"></path></svg>' },
+  { id: '05', n: 'NGÂN HÀNG TPBANK', p: '90.000đ', d: 'Mở tài khoản TPBank.', color: 'text-purple-400', svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>' },
+  { id: '06', n: 'NGÂN HÀNG VPBANK', p: '100.000đ', d: 'Mở tài khoản VPBank.', color: 'text-green-400', svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>' }
 ];
 </script>
 
@@ -61,7 +61,7 @@ const jobsData = [
               <template v-if="stat.key === 'balance'">{{ userBalance.toLocaleString() }}</template>
               <template v-else-if="stat.key === 'withdrawn'">{{ (totalWithdrawn || 0).toLocaleString() }}</template>
               <template v-else>{{ stat.value }}</template>
-              <span class="text-[9px] ml-0.5">{{ stat.unit }}</span>
+              <span class="text-[9px] ml-0.5">Đ</span>
             </p>
           </div>
         </div>
@@ -80,7 +80,7 @@ const jobsData = [
           <div v-for="j in jobsData" :key="j.id" @click="emit('receiveJob', j.n)" 
             class="relative bg-[#0d121f] pt-1.5 px-2.5 pb-2.5 md:pt-4 md:px-6 md:pb-6 rounded-[18px] border border-slate-800 transition-all duration-300 flex flex-col min-h-0 hover:border-blue-500/20 shadow-xl group">
             
-            <!-- NHÃN HOT RỰC CHÁY -->
+            <!-- NHÃN HOT - CỐ ĐỊNH KÍCH THƯỚC VÀ HIỆU ỨNG -->
             <div class="absolute -top-1.5 -right-1.5 z-20 flex items-center gap-1 bg-gradient-to-r from-orange-600 to-red-600 text-white text-[10px] px-2 py-1 rounded-bl-xl rounded-tr-lg font-black italic animate-pulse shadow-lg shadow-red-900/60 scale-110">
               HOT 🔥
             </div>
@@ -90,10 +90,10 @@ const jobsData = [
               <span class="text-lg md:text-5xl text-slate-800/10 font-black leading-none select-none">{{ j.id }}</span>
             </div>
             
-            <h4 class="text-[10px] md:text-base text-white leading-tight font-black italic uppercase line-clamp-1 mt-0.5">{{ j.n }}</h4>
+            <h4 class="text-[9px] md:text-base text-white leading-tight font-black italic uppercase line-clamp-1 mt-0.5">{{ j.n }}</h4>
             
-            <!-- MÔ TẢ: MÀU VÀNG & TO HƠN -->
-            <p class="text-yellow-400 text-[10px] md:text-[12px] opacity-90 leading-tight normal-case italic line-clamp-1 mt-0">{{ j.d }}</p>
+            <!-- MÔ TẢ: MÀU VÀNG VÀ SIZE CHỮ CHUẨN -->
+            <p class="text-yellow-400 text-[10px] md:text-[12px] opacity-95 leading-tight normal-case italic line-clamp-1 mt-0">{{ j.d }}</p>
             
             <p class="text-emerald-400 font-black text-[14px] md:text-2xl tracking-tighter leading-none mt-1">{{ j.p }}</p>
             
