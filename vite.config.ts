@@ -5,8 +5,8 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  // Fix lỗi đường dẫn trên GitHub Pages - KHÔNG ĐƯỢC XÓA DÒNG NÀY
-  base: '/nguyenvanca14062001-ops/', 
+  // SỬA CHỖ NÀY: Vì domain của mày đã có tên repo, nên base chỉ để là '/'
+  base: '/', 
   
   plugins: [
     vue(),
@@ -20,9 +20,7 @@ export default defineConfig({
   },
 
   build: {
-    // Tăng giới hạn cảnh báo dung lượng file
     chunkSizeWarningLimit: 2000,
-    // Đảm bảo asset được build ra đúng thư mục
     outDir: 'dist',
     assetsDir: 'assets',
   }
