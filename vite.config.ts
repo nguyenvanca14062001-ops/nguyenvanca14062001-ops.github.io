@@ -5,7 +5,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 export default defineConfig({
   // PHẢI CÓ ĐỦ DẤU / Ở ĐẦU VÀ CUỐI NHƯ NÀY
-  base: '/nguyenvanca14062001-ops/', 
+  base: 'nguyenvanca14062001-ops/', 
   plugins: [
     vue(),
     vueDevTools(),
