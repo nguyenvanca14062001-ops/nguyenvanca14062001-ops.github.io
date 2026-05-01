@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// Nhận Props từ file cha để hiển thị dữ liệu thực tế
 defineProps<{ 
   username: string; 
   isLoggedIn: boolean; 
@@ -8,7 +9,7 @@ defineProps<{
 
 const emit = defineEmits(['receiveJob', 'contactSupport', 'routerPush']);
 
-// Cấu hình 4 ô thông số tài khoản
+// 4 ô thông số tài khoản
 const userStats = [
   { label: 'SỐ DƯ KHẢ DỤNG', key: 'balance', unit: 'Đ', color: 'text-blue-500', icon: '💰' },
   { label: 'TỔNG ĐÃ RÚT', key: 'withdrawn', unit: 'Đ', color: 'text-rose-500', icon: '💸' },
@@ -16,125 +17,94 @@ const userStats = [
   { label: 'THU NHẬP TUẦN NÀY', key: 'weekly', value: '0', unit: 'Đ', color: 'text-emerald-500', icon: '📈' }
 ];
 
+// DANH SÁCH 6 CÔNG VIỆC - ĐỒNG BỘ MÀU VÀNG VÀ ĐẨY LÊN TRÊN
 const jobsData = [
-  {
-    id: '01', 
-    n: 'APP CHỨNG KHOÁN', 
-    p: '200.000đ', 
-    d: 'Đăng ký tài khoản & KYC nhận ngay thưởng lớn.',
-    iconColor: 'text-blue-500 border-blue-500/40',
-    cardHover: 'hover:border-blue-500/50',
-    titleHover: 'group-hover:text-blue-400',
-    btnHover: 'group-hover:bg-blue-600',
-    svg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>`
-  },
-  {
-    id: '02', 
-    n: 'GOOGLE MAP', 
-    p: '15.000đ', 
-    d: 'Đánh giá địa điểm nhận thưởng hàng ngày.',
-    iconColor: 'text-orange-500 border-orange-500/40',
-    cardHover: 'hover:border-orange-500/50',
-    titleHover: 'group-hover:text-orange-400',
-    btnHover: 'group-hover:bg-orange-600',
-    svg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>`
-  },
-  {
-    id: '03', 
-    n: 'APP NGÂN HÀNG', 
-    p: '100.000đ', 
-    d: 'Mở tài khoản các ngân hàng Việt Nam...',
-    iconColor: 'text-emerald-500 border-emerald-500/40',
-    cardHover: 'hover:border-emerald-500/50',
-    titleHover: 'group-hover:text-emerald-400',
-    btnHover: 'group-hover:bg-emerald-600',
-    svg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="20" width="20" height="2"></rect><rect x="4" y="10" width="2" height="10"></rect><rect x="10" y="10" width="2" height="10"></rect><rect x="16" y="10" width="2" height="10"></rect><polygon points="12 2 2 10 22 10 12 2"></polygon></svg>`
-  },
-  {
-    id: '04', 
-    n: 'XEM TIKTOK', 
-    p: '500đ', 
-    d: 'Cày video & thả tim nhận quà không giới hạn.',
-    iconColor: 'text-rose-500 border-rose-500/40',
-    cardHover: 'hover:border-rose-500/50',
-    titleHover: 'group-hover:text-rose-400',
-    btnHover: 'group-hover:bg-rose-600',
-    svg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0-1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>`
-  }
+  { id: '01', n: 'APP CHỨNG KHOÁN', p: '150.000đ', d: 'Đăng ký & KYC nhận thưởng.', color: 'text-blue-400', svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline></svg>` },
+  { id: '02', n: 'GOOGLE MAP', p: '15.000đ', d: 'Đánh giá nhận thưởng ngay.', color: 'text-orange-400', svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path></svg>` },
+  { id: '03', n: 'NGÂN HÀNG MSB', p: '80.000đ', d: 'Mở tài khoản ngân hàng MSB.', color: 'text-emerald-400', svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><rect x="2" y="20" width="20" height="2"></rect><path d="M12 2L2 10h20L12 2z"></path></svg>` },
+  { id: '04', n: 'GIỚI THIỆU BẠN BÈ ', p: '100.000đ', d: 'Giới thiệu bạn bè đăng ký APP ngân hàng.', color: 'text-rose-400', svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46"></path></svg>` },
+  { id: '05', n: 'NGÂN HÀNG TPBANK', p: '90.000đ', d: 'Mở tài khoản TPBank.', color: 'text-purple-400', svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>` },
+  { id: '06', n: 'NGÂN HÀNG VPBANK', p: '100.000đ', d: 'Mở tài khoản VPBank.', color: 'text-green-400', svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>` }
 ];
 </script>
 
 <template>
-  <div class="space-y-6 animate-in fade-in slide-in-from-bottom-5 duration-700 font-black italic uppercase text-left">
+  <div class="space-y-4 animate-in fade-in duration-700 font-black uppercase text-left italic">
     
-    <!-- DASHBOARD AREA: BANNER & STATS GRID -->
-    <div class="flex flex-col gap-6">
-      
-      <!-- BANNER CHÀO MỪNG (DẠNG RỘNG) -->
-      <section class="relative bg-[#111726] rounded-[45px] border border-slate-800/50 p-8 md:p-14 overflow-hidden shadow-2xl min-h-[300px] flex items-center">
-        <div class="absolute -right-20 -top-20 w-[450px] h-[450px] bg-blue-600/10 rounded-full blur-[100px] animate-pulse"></div>
-        
-        <div class="relative z-10 space-y-6 w-full">
-          <div class="inline-flex items-center gap-3 bg-emerald-500/10 text-emerald-500 text-[10px] px-5 py-2.5 rounded-full border border-emerald-500/20 tracking-[2px]">
-            <span class="relative flex h-2 w-2">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            Hệ thống đang trực tuyến
+    <!-- BANNER CHÀO MỪNG -->
+    <div class="flex flex-col lg:flex-row gap-2">
+      <section class="lg:w-2/3 relative bg-[#111726]/80 rounded-[30px] border border-slate-800/50 p-5 md:p-12 overflow-hidden flex items-center min-h-[180px] md:min-h-[320px] shadow-2xl">
+        <div class="absolute -right-20 -top-20 w-[300px] h-[300px] bg-blue-600/10 rounded-full blur-[80px]"></div>
+        <div class="relative z-10 space-y-3 w-full">
+          <div class="inline-flex items-center gap-1.5 bg-emerald-500/10 text-emerald-500 text-[7px] px-2 py-0.5 rounded-full border border-emerald-500/20">
+            <span class="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span> TRỰC TUYẾN
           </div>
-
-          <h1 class="text-3xl md:text-5xl text-white leading-[0.95] tracking-tighter">
-            {{ isLoggedIn ? 'CHÀO MỪNG TRỞ LẠI,' : 'CHÀO MỪNG ĐẾN VỚI' }} <br/>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-600 to-indigo-400">
-              {{ username.toUpperCase() }}
-            </span>
+          <h1 class="text-2xl md:text-5xl text-white leading-[0.95] tracking-tighter">
+            CHÀO MỪNG,<br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">{{ username.toUpperCase() }}</span>
           </h1>
-
-          <div class="space-y-2 border-l-2 border-blue-600/40 pl-5">
-            <p class="text-slate-400 text-[11px] max-w-sm normal-case font-bold tracking-wide leading-relaxed italic">
-              Nền tảng kiếm tiền Online <span class="text-emerald-400">không cần vốn - không thu phí</span>.
-            </p>
-          </div>
-
-          <div v-if="!isLoggedIn" class="pt-4">
-            <button @click="emit('routerPush', '/login')" class="bg-blue-600 text-white px-10 py-5 rounded-[22px] text-[11px] tracking-[2px] shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center gap-3 border border-white/10 font-black italic uppercase">
-              ĐĂNG NHẬP NGAY
-            </button>
-          </div>
+          <p class="text-slate-400 text-[9px] normal-case font-bold leading-tight italic border-l-2 border-blue-600 pl-3 max-w-xs opacity-80">
+            Nền tảng kiếm tiền Online không cần vốn. Rút tiền nhanh gọn 24/7.
+          </p>
+          <button v-if="!isLoggedIn" @click="emit('routerPush', '/login')" class="bg-blue-600 text-white px-6 py-2.5 rounded-xl text-[9px] shadow-lg shadow-blue-900/40 uppercase font-black">
+            ĐĂNG NHẬP NGAY
+          </button>
         </div>
       </section>
 
-      <!-- THAY ĐỔI TẠI ĐÂY: GRID CHIA 2 CỘT CHO ĐIỆN THOẠI -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div v-for="stat in userStats" :key="stat.label" class="bg-[#111726] border border-slate-800/60 rounded-[35px] p-6 flex flex-col justify-between relative overflow-hidden group hover:border-slate-600 transition-all shadow-xl min-h-[130px]">
-          <div class="absolute -right-4 -bottom-4 text-6xl opacity-[0.03] group-hover:scale-125 transition-transform select-none">{{ stat.icon }}</div>
-          <p class="text-slate-500 text-[9px] tracking-[2px] opacity-80 uppercase leading-tight">{{ stat.label }}</p>
-          <p class="text-xl md:text-2xl font-black italic tracking-tighter leading-none mt-4" :class="stat.color">
-            <template v-if="stat.key === 'balance'">{{ userBalance.toLocaleString() }}</template>
-            <template v-else-if="stat.key === 'withdrawn'">{{ (totalWithdrawn || 0).toLocaleString() }}</template>
-            <template v-else-if="stat.key === 'rank'">{{ stat.value }}</template>
-            <template v-else-if="stat.key === 'weekly'">{{ stat.value }}</template>
-            <span class="text-[10px] ml-0.5">{{ stat.unit }}</span>
-          </p>
+      <!-- 4 Ô THỐNG KÊ -->
+      <div class="lg:w-1/3 grid grid-cols-2 gap-2">
+        <div v-for="stat in userStats" :key="stat.label" class="bg-[#111726]/80 border border-slate-800/50 rounded-[22px] p-4 flex flex-col justify-between min-h-[100px] md:min-h-[150px] relative overflow-hidden group shadow-xl">
+          <div class="absolute -right-1 -bottom-1 text-3xl opacity-[0.03] select-none">{{ stat.icon }}</div>
+          <p class="text-slate-500 text-[7px] tracking-[1.5px] opacity-70 uppercase leading-none">{{ stat.label }}</p>
+          <div class="mt-auto">
+            <p class="text-base md:text-2xl font-black italic tracking-tighter leading-none" :class="stat.color">
+              <template v-if="stat.key === 'balance'">{{ userBalance.toLocaleString() }}</template>
+              <template v-else-if="stat.key === 'withdrawn'">{{ (totalWithdrawn || 0).toLocaleString() }}</template>
+              <template v-else>{{ stat.value }}</template>
+              <span class="text-[9px] ml-0.5">{{ stat.unit }}</span>
+            </p>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- CÔNG VIỆC NỔI BẬT -->
-    <section class="space-y-6 pt-6">
-      <div class="flex items-center gap-4">
-        <div class="w-2.5 h-10 bg-emerald-500 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.5)]"></div>
-        <h3 class="text-3xl md:text-5xl text-white tracking-tighter leading-none uppercase italic">CÔNG VIỆC <span class="text-emerald-500">NỔI BẬT</span></h3>
+    <!-- DANH SÁCH CÔNG VIỆC -->
+    <section class="space-y-2">
+      <div class="flex items-center gap-2 px-1">
+        <div class="w-1 h-4 bg-emerald-500 rounded-full"></div>
+        <h3 class="text-sm md:text-3xl text-white tracking-tighter italic font-black uppercase">CÔNG VIỆC <span class="text-emerald-500">NỔI BẬT</span></h3>
       </div>
       
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div v-for="(j, i) in jobsData" :key="i" @click="emit('receiveJob', j.n)" class="bg-[#111726] p-10 rounded-[50px] border border-slate-800 transition-all duration-500 group relative shadow-2xl overflow-hidden min-h-[400px] flex flex-col cursor-pointer hover:border-emerald-500/40 text-left">
-          <div class="absolute -right-4 -top-4 text-8xl text-slate-800/10 font-black select-none pointer-events-none">{{ j.id }}</div>
-          <div class="w-14 h-14 rounded-[20px] border bg-[#0d121f]/50 flex items-center justify-center mb-8 shadow-lg group-hover:scale-110 transition-all" :class="j.iconColor" v-html="j.svg"></div>
-          <h4 class="text-xl text-white mb-2 leading-none font-black italic uppercase" :class="j.titleHover">{{ j.n }}</h4>
-          <p class="text-slate-500 text-[10px] opacity-70 mb-auto leading-relaxed normal-case italic">{{ j.d }}</p>
-          <p class="text-emerald-400 font-black text-3xl mt-6 tracking-tighter leading-none italic uppercase">{{ j.p }}</p>
-          <button class="w-full mt-8 py-5 bg-[#1a2333] rounded-2xl text-[9px] text-white tracking-[2px] shadow-lg border border-white/5 font-black uppercase italic transition-colors" :class="j.btnHover">NHẬN VIỆC NGAY</button>
+      <div class="bg-[#111726]/40 border border-slate-800/50 rounded-[25px] p-1.5 md:p-8 shadow-inner">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-1.5 md:gap-4">
+          <div v-for="j in jobsData" :key="j.id" @click="emit('receiveJob', j.n)" 
+            class="relative bg-[#0d121f] pt-1.5 px-2.5 pb-2.5 md:pt-4 md:px-6 md:pb-6 rounded-[18px] border border-slate-800 transition-all duration-300 flex flex-col min-h-0 hover:border-blue-500/20 shadow-xl group">
+            
+            <!-- NHÃN HOT RỰC CHÁY -->
+            <div class="absolute -top-1.5 -right-1.5 z-20 flex items-center gap-1 bg-gradient-to-r from-orange-600 to-red-600 text-white text-[10px] px-2 py-1 rounded-bl-xl rounded-tr-lg font-black italic animate-pulse shadow-lg shadow-red-900/60 scale-110">
+              HOT 🔥
+            </div>
+
+            <div class="flex justify-between items-start mb-0">
+              <!-- ICON ĐẨY LÊN TRÊN (pt-1.5 ở card bọc ngoài đã xử lý) -->
+              <div class="w-6 h-6 md:w-12 md:h-12 rounded-lg border border-slate-800 bg-[#111726] flex items-center justify-center shadow-md" :class="j.color" v-html="j.svg"></div>
+              <span class="text-lg md:text-5xl text-slate-800/10 font-black leading-none select-none">{{ j.id }}</span>
+            </div>
+            
+            <!-- TIÊU ĐỀ SÁT LÊN TRÊN (mt-0.5) -->
+            <h4 class="text-[10px] md:text-base text-white leading-tight font-black italic uppercase line-clamp-1 mt-0.5">{{ j.n }}</h4>
+            
+            <!-- CHỮ ĐĂNG KÝ KYC: MÀU VÀNG VÀ TO HƠN (text-[10px]) -->
+            <p class="text-yellow-400 text-[10px] md:text-[12px] opacity-90 leading-tight normal-case italic line-clamp-1 mt-0">{{ j.d }}</p>
+            
+            <!-- TIỀN SÁT DÒNG CHỮ -->
+            <p class="text-emerald-400 font-black text-[14px] md:text-2xl tracking-tighter leading-none mt-1">{{ j.p }}</p>
+            
+            <!-- NÚT BẤM SÁT TIỀN -->
+            <button class="w-full mt-1 py-1.5 md:py-3 bg-[#1a2333] hover:bg-blue-600/10 rounded-lg text-[8px] md:text-[10px] text-white border border-white/5 font-black uppercase transition-all shadow-md">
+              NHẬN VIỆC
+            </button>
+          </div>
         </div>
       </div>
     </section>
