@@ -16,17 +16,21 @@ import JobDetailView from './views/JobDetailView.vue'
 import AdminView from './views/AdminView.vue'
 
 const routes = [
-  { path: '/', component: HomeView },
-  { path: '/login', component: LoginView },
-  { path: '/register', component: RegisterView },
-  { path: '/submit-report', component: SubmitReportView },
-  { path: '/withdraw', component: WithdrawView },
-  { path: '/job/:id', component: JobDetailView },
-  { path: '/admin', component: AdminView }
+  { 
+    path: '/', 
+    name: 'home',
+    component: HomeView 
+  },
+  { path: '/login', name: 'login', component: LoginView },
+  { path: '/register', name: 'register', component: RegisterView },
+  { path: '/submit-report', name: 'submit-report', component: SubmitReportView },
+  { path: '/withdraw', name: 'withdraw', component: WithdrawView },
+  { path: '/job/:id', name: 'job-detail', component: JobDetailView },
+  { path: '/admin', name: 'admin', component: AdminView }
 ]
 
 const router = createRouter({
-  // CHỖ NÀY LÀ MẤU CHỐT: Phải có BASE_URL để nó hiểu đường dẫn GitHub của mày
+  // Mấu chốt nằm ở đây, nó sẽ lấy giá trị 'base' từ file vite.config.ts của mày
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
 })
