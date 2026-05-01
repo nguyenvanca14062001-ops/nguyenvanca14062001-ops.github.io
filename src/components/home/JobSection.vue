@@ -17,12 +17,12 @@ const userStats = [
   { label: 'THU NHẬP TUẦN NÀY', key: 'weekly', value: '0', unit: 'Đ', color: 'text-emerald-500', icon: '📈' }
 ];
 
-// DANH SÁCH 6 CÔNG VIỆC - ĐỒNG BỘ MÀU VÀNG VÀ ĐẨY LÊN TRÊN
+// DANH SÁCH 6 CÔNG VIỆC - ĐÃ FIX LỖI CHÍNH TẢ VÀ ĐỒNG BỘ MÀU VÀNG
 const jobsData = [
   { id: '01', n: 'APP CHỨNG KHOÁN', p: '150.000đ', d: 'Đăng ký & KYC nhận thưởng.', color: 'text-blue-400', svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline></svg>` },
   { id: '02', n: 'GOOGLE MAP', p: '15.000đ', d: 'Đánh giá nhận thưởng ngay.', color: 'text-orange-400', svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path></svg>` },
   { id: '03', n: 'NGÂN HÀNG MSB', p: '80.000đ', d: 'Mở tài khoản ngân hàng MSB.', color: 'text-emerald-400', svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><rect x="2" y="20" width="20" height="2"></rect><path d="M12 2L2 10h20L12 2z"></path></svg>` },
-  { id: '04', n: 'GIỚI THIỆU BẠN BÈ ', p: '100.000đ', d: 'Giới thiệu bạn bè đăng ký APP ngân hàng.', color: 'text-rose-400', svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46"></path></svg>` },
+  { id: '04', n: 'GIỚI THIỆU BẠN BÈ ', p: '100.000đ', d: 'Giới thiệu nhận quà giới hạn.', color: 'text-rose-400', svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46"></path></svg>` },
   { id: '05', n: 'NGÂN HÀNG TPBANK', p: '90.000đ', d: 'Mở tài khoản TPBank.', color: 'text-purple-400', svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>` },
   { id: '06', n: 'NGÂN HÀNG VPBANK', p: '100.000đ', d: 'Mở tài khoản VPBank.', color: 'text-green-400', svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>` }
 ];
@@ -86,21 +86,17 @@ const jobsData = [
             </div>
 
             <div class="flex justify-between items-start mb-0">
-              <!-- ICON ĐẨY LÊN TRÊN (pt-1.5 ở card bọc ngoài đã xử lý) -->
               <div class="w-6 h-6 md:w-12 md:h-12 rounded-lg border border-slate-800 bg-[#111726] flex items-center justify-center shadow-md" :class="j.color" v-html="j.svg"></div>
               <span class="text-lg md:text-5xl text-slate-800/10 font-black leading-none select-none">{{ j.id }}</span>
             </div>
             
-            <!-- TIÊU ĐỀ SÁT LÊN TRÊN (mt-0.5) -->
             <h4 class="text-[10px] md:text-base text-white leading-tight font-black italic uppercase line-clamp-1 mt-0.5">{{ j.n }}</h4>
             
-            <!-- CHỮ ĐĂNG KÝ KYC: MÀU VÀNG VÀ TO HƠN (text-[10px]) -->
+            <!-- MÔ TẢ: MÀU VÀNG & TO HƠN -->
             <p class="text-yellow-400 text-[10px] md:text-[12px] opacity-90 leading-tight normal-case italic line-clamp-1 mt-0">{{ j.d }}</p>
             
-            <!-- TIỀN SÁT DÒNG CHỮ -->
             <p class="text-emerald-400 font-black text-[14px] md:text-2xl tracking-tighter leading-none mt-1">{{ j.p }}</p>
             
-            <!-- NÚT BẤM SÁT TIỀN -->
             <button class="w-full mt-1 py-1.5 md:py-3 bg-[#1a2333] hover:bg-blue-600/10 rounded-lg text-[8px] md:text-[10px] text-white border border-white/5 font-black uppercase transition-all shadow-md">
               NHẬN VIỆC
             </button>
