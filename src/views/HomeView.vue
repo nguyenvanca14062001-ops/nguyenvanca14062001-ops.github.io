@@ -86,15 +86,18 @@ const handleQuickJob = () => {
   if (el) el.scrollIntoView({ behavior: 'smooth' });
 }
 
-const handleReceiveJob = (jobName: string) => {
+/**
+ * HÀM SỬA LỖI CHÍNH: Nhận jobId trực tiếp để chuyển trang chính xác
+ */
+const handleReceiveJob = (jobId: string) => {
   if (!isLoggedIn.value) { router.push('/login'); return; }
-  if (jobName === 'APP NGÂN HÀNG') showBankModal.value = true
-  else {
-    const slug = jobName.toLowerCase()
-                        .normalize("NFD")
-                        .replace(/[\u0300-\u036f]/g, "")
-                        .replace(/\s+/g, '-');
-    router.push(`/job/${slug}`);
+  
+  // Nếu là cụm Ngân hàng chung, hiện Modal để chọn
+  if (jobId === 'APP NGÂN HÀNG' || jobId === 'app-ngan-hang') {
+    showBankModal.value = true
+  } else {
+    // Chuyển hướng theo đúng ID (ví dụ: msb, vpbank, google-map)
+    router.push(`/job/${jobId}`);
   }
 }
 
@@ -112,7 +115,7 @@ const logout = async () => {
 <template>
   <div class="min-h-screen bg-[#090e17] text-slate-300 font-sans flex flex-col overflow-x-hidden text-left uppercase italic font-black">
     
-    <!-- MOBILE HEADER: VÍ TIỀN & DẤU CỘNG -->
+    <!-- MOBILE HEADER -->
     <header class="lg:hidden fixed top-0 left-0 right-0 h-16 bg-[#111726]/95 backdrop-blur-xl border-b border-slate-800/50 z-[100] flex items-center justify-between px-6">
       <button @click="isMenuOpen = !isMenuOpen" class="text-white text-2xl p-2 -ml-2 font-sans italic">☰</button>
       <div class="text-white font-black tracking-tighter uppercase text-sm">MMO <span class="text-blue-500">PRO</span></div>
@@ -149,31 +152,15 @@ const logout = async () => {
       </main>
     </div>
 
-    <!-- NÚT LIÊN HỆ HỖ TRỢ CỐ ĐỊNH -->
-    <div class="fixed bottom-6 right-6 z-[999]">
-      <button 
-        @click="contactSupport"
-        class="group relative flex items-center gap-3 bg-[#0d121f]/80 backdrop-blur-md border-2 border-blue-500/50 hover:border-blue-400 px-6 py-3 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)] active:scale-95"
-      >
-        <div class="relative">
-          <div class="absolute inset-0 bg-blue-500 rounded-full animate-ping opacity-20"></div>
-          <svg class="w-6 h-6 text-white relative z-10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-          </svg>
-        </div>
-        <span class="text-white text-xs font-black tracking-widest uppercase italic font-sans">Liên hệ hỗ trợ</span>
-        <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-[#090e17] animate-pulse"></div>
-      </button>
-    </div>
-
-    <!-- BANK MODAL -->
+    <!-- BANK MODAL: Sửa đường dẫn để khớp với kho dữ liệu -->
     <div v-if="showBankModal" class="fixed inset-0 z-[200] flex items-center justify-center p-4">
       <div @click="showBankModal = false" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
       <div class="relative w-full max-w-md bg-[#111726] border border-slate-800 rounded-[35px] p-10 shadow-2xl animate-in zoom-in duration-300">
         <h3 class="text-xl text-white border-l-4 border-blue-600 pl-4 mb-8 font-black uppercase italic">Chọn Ngân Hàng</h3>
         <div class="space-y-4 font-bold uppercase italic font-black">
+          <!-- SỬA TẠI ĐÂY: Xóa chữ "bank-" để khớp ID 'msb', 'vpbank', 'tpbank' -->
           <div v-for="bank in [{ id: 'msb', name: 'MSB' }, { id: 'vpbank', name: 'VPBank' }, { id: 'tpbank', name: 'TPBank' }]" 
-            :key="bank.id" @click="() => { showBankModal = false; router.push(`/job/bank-${bank.id}`) }"
+            :key="bank.id" @click="() => { showBankModal = false; router.push(`/job/${bank.id}`) }"
             class="flex items-center justify-between p-6 bg-[#0d121f] border border-slate-800 rounded-2xl cursor-pointer hover:border-blue-500 transition-all group"
           >
             <span class="text-white">{{ bank.name }}</span>
@@ -184,7 +171,3 @@ const logout = async () => {
     </div>
   </div>
 </template>
-
-<style scoped>
-::-webkit-scrollbar { width: 0px; }
-</style>

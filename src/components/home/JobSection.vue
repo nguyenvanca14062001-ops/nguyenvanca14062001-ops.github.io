@@ -12,19 +12,53 @@ const emit = defineEmits(['receiveJob', 'contactSupport', 'routerPush']);
 // 4 ô thông số tài khoản
 const userStats = [
   { label: 'SỐ DƯ KHẢ DỤNG', key: 'balance', unit: 'Đ', color: 'text-blue-500', icon: '💰' },
-  { label: 'TỔNG ĐÃ RÚT', key: 'withdrawn', unit: 'Đ', color: 'text-rose-500', icon: '💸' },
-  { label: 'CẤP BẬC TÀI KHOẢN', key: 'rank', value: 'THÀNH VIÊN', unit: '', color: 'text-white', icon: '👑' },
-  { label: 'THU NHẬP TUẦN NÀY', key: 'weekly', value: '0', unit: 'Đ', color: 'text-emerald-500', icon: '📈' }
+  { label: 'TỔNG ĐÃ RÚT', key: 'withdrawn', unit: 'Đ', color: 'text-rose-400/90', icon: '💸' },
+  { label: 'CẤP BẬC TÀI KHOẢN', key: 'rank', value: 'THÀNH VIÊN', unit: '', color: 'text-white/90', icon: '👑' },
+  { label: 'THU NHẬP TUẦN NÀY', key: 'weekly', value: '0', unit: 'Đ', color: 'text-emerald-400/90', icon: '📈' }
 ];
 
-// Danh sách 6 công việc - Đã fix lỗi chính tả và làm sạch SVG
+/**
+ * TỔNG KHO CÔNG VIỆC TẠI TRANG CHỦ
+ */
 const jobsData = [
-  { id: '01', n: 'APP CHỨNG KHOÁN', p: '150.000đ', d: 'Đăng ký & KYC nhận thưởng.', color: 'text-blue-400', svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline></svg>' },
-  { id: '02', n: 'GOOGLE MAP', p: '15.000đ', d: 'Đánh giá nhận thưởng ngay.', color: 'text-orange-400', svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path></svg>' },
-  { id: '03', n: 'NGÂN HÀNG MSB', p: '80.000đ', d: 'Mở tài khoản ngân hàng MSB.', color: 'text-emerald-400', svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><rect x="2" y="20" width="20" height="2"></rect><path d="M12 2L2 10h20L12 2z"></path></svg>' },
-  { id: '04', n: 'GIỚI THIỆU BẠN BÈ', p: '100.000đ', d: 'Giới thiệu nhận quà giới hạn.', color: 'text-rose-400', svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46"></path></svg>' },
-  { id: '05', n: 'NGÂN HÀNG TPBANK', p: '90.000đ', d: 'Mở tài khoản TPBank.', color: 'text-purple-400', svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>' },
-  { id: '06', n: 'NGÂN HÀNG VPBANK', p: '100.000đ', d: 'Mở tài khoản VPBank.', color: 'text-green-400', svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>' }
+  { 
+    id: 'google-map', 
+    n: 'ĐÁNH GIÁ GOOGLE MAP', 
+    p: '15.000đ', 
+    d: 'Đánh giá nhận thưởng ngay.', 
+    color: 'text-orange-400', 
+    type: 'svg',
+    iconContent: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path></svg>' 
+  },
+  { 
+    id: 'app-chung-khoan', 
+    n: 'ĐĂNG KÝ APP CHỨNG KHOÁN', 
+    p: '200.000đ', 
+    d: 'Đăng ký & KYC nhận thưởng.', 
+    color: 'text-blue-400', 
+    type: 'svg',
+    iconContent: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline></svg>' 
+  },
+  { 
+    id: 'vpbank', 
+    n: 'ĐĂNG KÝ NGÂN HÀNG VPBANK', 
+    p: '100.000đ', 
+    d: 'Mở tài khoản VPBank.', 
+    type: 'text', 
+    shortName: 'VPB', 
+    colorClass: 'text-emerald-500', 
+    borderClass: 'border-emerald-500/40' 
+  },
+  { 
+    id: 'tpbank', 
+    n: 'ĐĂNG KÝ NGÂN HÀNG TPBANK', 
+    p: '70.000đ', 
+    d: 'Mở tài khoản TPBank.', 
+    type: 'text', 
+    shortName: 'TPB', 
+    colorClass: 'text-purple-500', 
+    borderClass: 'border-purple-500/40' 
+  }
 ];
 </script>
 
@@ -33,42 +67,70 @@ const jobsData = [
     
     <!-- BANNER CHÀO MỪNG -->
     <div class="flex flex-col lg:flex-row gap-2">
-      <section class="lg:w-2/3 relative bg-[#111726]/80 rounded-[30px] border border-slate-800/50 p-5 md:p-12 overflow-hidden flex items-center min-h-[180px] md:min-h-[320px] shadow-2xl">
+      <section class="lg:w-2/3 relative bg-[#111726]/80 rounded-[30px] border border-slate-800/50 p-6 md:p-10 overflow-hidden flex items-start pt-8 md:pt-10 min-h-[200px] md:min-h-[400px] shadow-2xl">
         <div class="absolute -right-20 -top-20 w-[300px] h-[300px] bg-blue-600/10 rounded-full blur-[80px]"></div>
-        <div class="relative z-10 space-y-3 w-full">
-          <div class="inline-flex items-center gap-1.5 bg-emerald-500/10 text-emerald-500 text-[7px] px-2 py-0.5 rounded-full border border-emerald-500/20">
-            <span class="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span> TRỰC TUYẾN
+        
+        <div class="relative z-10 space-y-6 w-full">
+          <div class="inline-flex items-center gap-1.5 bg-emerald-500/10 text-emerald-500 text-[8px] px-2.5 py-1 rounded-full border border-emerald-500/20">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> HỆ THỐNG TRỰC TUYẾN
           </div>
-          <h1 class="text-2xl md:text-5xl text-white leading-[0.95] tracking-tighter">
-            CHÀO MỪNG,<br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">{{ username.toUpperCase() }}</span>
+
+          <h1 class="text-2xl md:text-4xl text-white leading-tight tracking-tighter uppercase font-black italic -mt-2">
+            CHÀO MỪNG,<br/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 text-3xl md:text-5xl">
+              {{ username.toUpperCase() }}
+            </span>
           </h1>
-          <p class="text-slate-400 text-[9px] normal-case font-bold leading-tight italic border-l-2 border-blue-600 pl-3 max-w-xs opacity-80">
-            Nền tảng kiếm tiền Online không cần vốn. Rút tiền nhanh gọn 24/7.
-          </p>
-          <button v-if="!isLoggedIn" @click="emit('routerPush', '/login')" class="bg-blue-600 text-white px-6 py-2.5 rounded-xl text-[9px] shadow-lg shadow-blue-900/40 uppercase font-black">
-            ĐĂNG NHẬP NGAY
-          </button>
+
+          <div class="space-y-4 border-l-4 border-blue-600 pl-5 max-w-2xl">
+            <p class="text-slate-200 text-[12px] md:text-[15px] normal-case font-bold leading-relaxed italic opacity-95">
+              Nền tảng kiếm tiền Online minh bạch. Rút tiền nhanh gọn 24/7.
+            </p>
+            <p class="text-rose-400 text-[11px] md:text-[13px] normal-case font-black leading-snug tracking-wide">
+              ⚠️ CẢNH BÁO: Nghiêm cấm mọi hành vi gian lận hoặc gửi bằng chứng giả. Hệ thống sẽ khóa tài khoản vĩnh viễn nếu phát hiện vi phạm.
+            </p>
+            <p class="text-blue-400 text-[11px] md:text-[13px] normal-case font-bold leading-snug">
+              💡 MẸO: Liên hệ trực tiếp qua <span class="underline cursor-pointer hover:text-white transition-colors" @click="emit('contactSupport', 'facebook')">Fanpage Support</span> để được ưu tiên duyệt đơn nhanh hơn trong vòng 15-30 phút.
+            </p>
+          </div>
+
+          <div v-if="!isLoggedIn" class="pt-4">
+            <button @click="emit('routerPush', '/login')" class="bg-blue-600 hover:bg-blue-500 text-white px-10 py-4 rounded-2xl text-[11px] shadow-xl shadow-blue-900/40 uppercase font-black transition-all active:scale-95">
+              BẮT ĐẦU KIẾM TIỀN NGAY
+            </button>
+          </div>
         </div>
       </section>
 
       <!-- 4 Ô THỐNG KÊ -->
       <div class="lg:w-1/3 grid grid-cols-2 gap-2">
-        <div v-for="stat in userStats" :key="stat.label" class="bg-[#111726]/80 border border-slate-800/50 rounded-[22px] p-4 flex flex-col justify-between min-h-[100px] md:min-h-[150px] relative overflow-hidden group shadow-xl">
-          <div class="absolute -right-1 -bottom-1 text-3xl opacity-[0.03] select-none">{{ stat.icon }}</div>
-          <p class="text-slate-500 text-[7px] tracking-[1.5px] opacity-70 uppercase leading-none">{{ stat.label }}</p>
-          <div class="mt-auto">
-            <p class="text-base md:text-2xl font-black italic tracking-tighter leading-none" :class="stat.color">
-              <template v-if="stat.key === 'balance'">{{ userBalance.toLocaleString() }}</template>
-              <template v-else-if="stat.key === 'withdrawn'">{{ (totalWithdrawn || 0).toLocaleString() }}</template>
-              <template v-else>{{ stat.value }}</template>
-              <span class="text-[9px] ml-0.5">Đ</span>
+        <div v-for="stat in userStats" :key="stat.label" 
+          class="bg-[#111726]/80 border border-slate-800/50 rounded-[22px] p-4 flex flex-col justify-start min-h-[100px] md:min-h-[150px] relative overflow-hidden group shadow-xl">
+          
+          <p class="text-slate-500 text-[7px] tracking-[1.5px] opacity-70 uppercase leading-none mb-3">{{ stat.label }}</p>
+          
+          <div class="relative z-10">
+            <p class="font-black italic tracking-tighter leading-none flex items-baseline" :class="stat.color">
+              <template v-if="stat.key === 'rank'">
+                <span class="text-lg md:text-xl uppercase">{{ stat.value }}</span>
+              </template>
+              <template v-else>
+                <span class="text-2xl md:text-4xl">
+                  <template v-if="stat.key === 'balance'">{{ userBalance.toLocaleString() }}</template>
+                  <template v-else-if="stat.key === 'withdrawn'">{{ (totalWithdrawn || 0).toLocaleString() }}</template>
+                  <template v-else>{{ stat.value }}</template>
+                </span>
+                <span class="text-[10px] ml-1 uppercase not-italic font-sans opacity-80">đ</span>
+              </template>
             </p>
           </div>
+
+          <div class="absolute -right-1 -bottom-1 text-3xl opacity-[0.03] select-none">{{ stat.icon }}</div>
         </div>
       </div>
     </div>
 
-    <!-- DANH SÁCH CÔNG VIỆC -->
+    <!-- DANH SÁCH CÔNG VIỆC NỔI BẬT -->
     <section class="space-y-2">
       <div class="flex items-center gap-2 px-1">
         <div class="w-1 h-4 bg-emerald-500 rounded-full"></div>
@@ -77,27 +139,55 @@ const jobsData = [
       
       <div class="bg-[#111726]/40 border border-slate-800/50 rounded-[25px] p-1.5 md:p-8 shadow-inner">
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-1.5 md:gap-4">
-          <div v-for="j in jobsData" :key="j.id" @click="emit('receiveJob', j.n)" 
-            class="relative bg-[#0d121f] pt-1.5 px-2.5 pb-2.5 md:pt-4 md:px-6 md:pb-6 rounded-[18px] border border-slate-800 transition-all duration-300 flex flex-col min-h-0 hover:border-blue-500/20 shadow-xl group">
+          <div v-for="(j, index) in jobsData" :key="j.id" @click="emit('receiveJob', j.id)" 
+            class="relative pt-4 px-4 pb-4 md:pt-6 md:px-7 md:pb-7 rounded-[22px] border transition-all duration-300 flex flex-col min-h-0 group cursor-pointer active:scale-95 shadow-xl"
+            :class="[
+              j.id === 'google-map' 
+              ? 'bg-blue-600/10 border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.3)] ring-1 ring-blue-400/30' 
+              : 'bg-[#0d121f] border-slate-800 hover:border-blue-500/40'
+            ]"
+          >
             
-            <!-- NHÃN HOT - CỐ ĐỊNH KÍCH THƯỚC VÀ HIỆU ỨNG -->
-            <div class="absolute -top-1.5 -right-1.5 z-20 flex items-center gap-1 bg-gradient-to-r from-orange-600 to-red-600 text-white text-[10px] px-2 py-1 rounded-bl-xl rounded-tr-lg font-black italic animate-pulse shadow-lg shadow-red-900/60 scale-110">
+            <div class="absolute -top-1.5 -right-1.5 z-20 flex items-center gap-1 bg-gradient-to-r from-orange-600 to-red-600 text-white text-[9px] px-2 py-1 rounded-bl-xl rounded-tr-lg font-black italic animate-pulse shadow-lg shadow-red-900/60">
               HOT 🔥
             </div>
 
-            <div class="flex justify-between items-start mb-0">
-              <div class="w-6 h-6 md:w-12 md:h-12 rounded-lg border border-slate-800 bg-[#111726] flex items-center justify-center shadow-md" :class="j.color" v-html="j.svg"></div>
-              <span class="text-lg md:text-5xl text-slate-800/10 font-black leading-none select-none">{{ j.id }}</span>
+            <div class="flex justify-between items-start mb-3">
+              <!-- ICON GOOGLE MAP CŨNG ĐƯỢC LÀM NỔI BẬT -->
+              <div v-if="j.type === 'svg'" 
+                   class="w-10 h-10 md:w-14 md:h-14 rounded-[15px] border flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform" 
+                   :class="[j.id === 'google-map' ? 'bg-blue-500/20 border-blue-400 shadow-blue-500/50' : 'bg-[#111726] border-slate-800', j.color]" 
+                   v-html="j.iconContent">
+              </div>
+
+              <div v-else-if="j.type === 'text'" 
+                   :class="['w-10 h-10 md:w-14 md:h-14 rounded-[15px] bg-[#111726] flex items-center justify-center shadow-lg border group-hover:scale-110 transition-transform', j.borderClass]">
+                <span :class="['font-black text-[10px] md:text-sm italic uppercase', j.colorClass]">
+                  {{ j.shortName }}
+                </span>
+              </div>
+
+              <!-- SỐ THỨ TỰ CHO GOOGLE MAP -->
+              <span class="text-2xl md:text-5xl font-black leading-none select-none transition-colors"
+                :class="j.id === 'google-map' ? 'text-blue-500/20' : 'text-slate-800/10'"
+              >
+                {{ (index + 1).toString().padStart(2, '0') }}
+              </span>
             </div>
             
-            <h4 class="text-[9px] md:text-base text-white leading-tight font-black italic uppercase line-clamp-1 mt-0.5">{{ j.n }}</h4>
+            <h4 class="text-[10px] md:text-base text-white leading-tight font-black italic uppercase line-clamp-1 mt-1">{{ j.n }}</h4>
+            <p class="text-yellow-400 text-[10px] md:text-[12px] opacity-80 leading-tight normal-case italic line-clamp-1 mt-1">{{ j.d }}</p>
+            <p class="text-emerald-400 font-black text-[16px] md:text-2xl tracking-tighter leading-none mt-2">{{ j.p }}</p>
             
-            <!-- MÔ TẢ: MÀU VÀNG VÀ SIZE CHỮ CHUẨN -->
-            <p class="text-yellow-400 text-[10px] md:text-[12px] opacity-95 leading-tight normal-case italic line-clamp-1 mt-0">{{ j.d }}</p>
-            
-            <p class="text-emerald-400 font-black text-[14px] md:text-2xl tracking-tighter leading-none mt-1">{{ j.p }}</p>
-            
-            <button class="w-full mt-1 py-1.5 md:py-3 bg-[#1a2333] hover:bg-blue-600/10 rounded-lg text-[8px] md:text-[10px] text-white border border-white/5 font-black uppercase transition-all shadow-md">
+            <!-- NÚT RIÊNG CHO GOOGLE MAP -->
+            <button 
+              class="w-full mt-4 py-2 md:py-3.5 rounded-xl text-[8px] md:text-[10px] border font-black uppercase transition-all shadow-md"
+              :class="[
+                j.id === 'google-map' 
+                ? 'bg-blue-600 text-white border-white/20 shadow-blue-900/40' 
+                : 'bg-[#1a2333] group-hover:bg-blue-600 text-white border-white/5 group-hover:shadow-blue-900/40'
+              ]"
+            >
               NHẬN VIỆC
             </button>
           </div>
@@ -106,3 +196,7 @@ const jobsData = [
     </section>
   </div>
 </template>
+
+<style scoped>
+.normal-case { text-transform: none; }
+</style>

@@ -116,7 +116,7 @@ const handleLogin = async () => {
           <div class="space-y-2 text-left">
             <div class="flex justify-between items-center px-1">
               <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest italic">Mật khẩu</label>
-              <button class="text-[11px] font-black text-blue-600 uppercase hover:underline italic">Quên mật khẩu?</button>
+             
             </div>
             <div class="relative group">
               <span class="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-colors text-lg">🔒</span>

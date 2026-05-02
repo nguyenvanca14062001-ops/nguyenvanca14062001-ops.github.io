@@ -1,170 +1,207 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { db } from '@/firebase'
-import { 
-  collection, 
-  query, 
-  onSnapshot, 
-  doc, 
-  updateDoc, 
-  increment, 
-  deleteDoc, 
-  orderBy 
-} from "firebase/firestore"
+import { useRouter } from 'vue-router'
+import { auth, db } from '@/firebase' 
+import { onAuthStateChanged, signOut } from "firebase/auth" 
+import { collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc, increment } from "firebase/firestore"
 
 const reports = ref<any[]>([])
-const selectedImage = ref('') // Dùng để lưu link ảnh khi bấm zoom
+const usersMap = ref<Record<string, any>>({}) // BẢN ĐỒ CHỨA INFO TÀI KHOẢN GỐC
+const isLoading = ref(true)
+const router = useRouter()
 
-// 1. Lấy đơn nộp từ Firestore - Sắp xếp đơn mới nhất lên đầu
+// --- LOGIC ZOOM ẢNH BẰNG CHỨNG ---
+const selectedImage = ref<string | null>(null)
+const openImage = (img: string) => { selectedImage.value = img }
+const closeImage = () => { selectedImage.value = null }
+
+// 1. LẤY DỮ LIỆU ĐƠN NỘP VÀ TÀI KHOẢN TỪ FIREBASE 
 onMounted(() => {
-  const q = query(collection(db, "reports"), orderBy("createdAt", "desc"))
-  onSnapshot(q, (snapshot) => {
-    reports.value = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // BƯỚC 1: LẤY TOÀN BỘ DATA TÀI KHOẢN ĐỂ ĐỐI CHIẾU
+      onSnapshot(collection(db, "users"), (snapshot) => {
+        const map: Record<string, any> = {}
+        snapshot.docs.forEach(doc => {
+          map[doc.id] = doc.data()
+        })
+        usersMap.value = map
+      })
+
+      // BƯỚC 2: LẤY BẰNG CHỨNG NỘP
+      const q = query(collection(db, "reports"), orderBy("createdAt", "desc"))
+      onSnapshot(q, (snapshot) => {
+        reports.value = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+        isLoading.value = false
+      }, (error) => {
+        console.error("LỖI LẤY DỮ LIỆU:", error)
+      })
+    } else {
+      router.push('/login') 
+    }
   })
 })
 
-// 2. HÀM DUYỆT: Cộng tiền & Xóa mảng ảnh cho sạch
+// 2. HÀM DUYỆT ĐƠN
 const approveReport = async (report: any) => {
-  if (report.status === 'approved') return alert('Đơn này mày duyệt rồi!')
+  if (!confirm(`XÁC NHẬN DUYỆT ĐƠN VÀ CỘNG ${report.reward.toLocaleString()}Đ VÀO TÀI KHOẢN GỐC CỦA KHÁCH?`)) return
   
-  const confirmDuyet = confirm(`Duyệt đơn cho ${report.phoneRef}? +${report.reward}đ`)
-  if (!confirmDuyet) return
-
   try {
-    // A. Cộng tiền vào ví khách
-    const userRef = doc(db, "users", report.uid)
-    await updateDoc(userRef, {
-      balance: increment(report.reward)
-    })
-
-    // B. Cập nhật trạng thái và XÓA MẢNG ẢNH
-    const reportRef = doc(db, "reports", report.id)
-    await updateDoc(reportRef, {
-      status: 'approved',
-      images: [] // Đã sửa thành dọn dẹp mảng images thay vì biến image cũ
-    })
-
-    alert('Đã cộng tiền và dọn dẹp ảnh xong! ✅')
+    await updateDoc(doc(db, "reports", report.id), { status: 'approved' })
+    const userRef = doc(db, "users", report.uid) // UID gốc đéo fake được
+    await updateDoc(userRef, { balance: increment(report.reward) })
+    alert("ĐÃ DUYỆT VÀ CỘNG TIỀN THÀNH CÔNG!")
   } catch (error) {
-    alert('Lỗi duyệt bài: ' + error)
+    alert("LỖI KHI DUYỆT: " + error)
   }
 }
 
-// 3. HÀM TỪ CHỐI
-const rejectReport = async (reportId: string) => {
-  const note = prompt('Lý do từ chối:', 'Ảnh mờ hoặc sai thông tin')
-  if (note === null) return
-
+// 3. HÀM HỦY ĐƠN
+const rejectReport = async (id: string) => {
+  const reason = prompt("NHẬP LÝ DO TỪ CHỐI (VÍ DỤ: ẢNH FAKE, SAI THÔNG TIN):")
+  if (reason === null) return
+  
   try {
-    const reportRef = doc(db, "reports", reportId)
-    await updateDoc(reportRef, {
+    await updateDoc(doc(db, "reports", id), { 
       status: 'rejected',
-      note: note
+      note: reason || "Thông tin không chính xác"
     })
-  } catch (error) {
-    alert('Lỗi: ' + error)
+  } catch(error) {
+    alert("LỖI KHI HỦY: " + error)
   }
 }
 
-// 4. XÓA ĐƠN
-const deleteReport = async (reportId: string) => {
-  if (confirm('Xóa vĩnh viễn đơn này?')) {
-    await deleteDoc(doc(db, "reports", reportId))
+// 4. HÀM XÓA ĐƠN
+const deleteReport = async (id: string) => {
+  if (confirm("BẠN CÓ CHẮC CHẮN MUỐN XÓA VĨNH VIỄN ĐƠN NÀY?")) {
+    try {
+      await deleteDoc(doc(db, "reports", id))
+    } catch(error) {
+      alert("LỖI XÓA ĐƠN: " + error)
+    }
+  }
+}
+
+// 5. NÚT THOÁT
+const handleAdminLogout = async () => {
+  if(confirm('XÁC NHẬN THOÁT TÀI KHOẢN ADMIN?')) {
+    await signOut(auth)
+    router.push('/login')
   }
 }
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#090e17] p-4 md:p-10 font-black italic uppercase text-left relative selection:bg-blue-500/30">
+  <div class="min-h-screen bg-[#090e17] p-4 md:p-10 font-black italic uppercase text-left selection:bg-blue-500/30 relative">
     
-    <!-- HEADER -->
-    <div class="flex justify-between items-center mb-10 border-b border-slate-800 pb-6">
-      <h1 class="text-3xl md:text-4xl text-white tracking-tighter">HỆ THỐNG <span class="text-[#3b82f6]">ADMIN</span></h1>
-      <button @click="$router.push('/')" class="bg-slate-800 hover:bg-white hover:text-black text-slate-400 px-6 py-2 rounded-full text-[10px] transition-all tracking-[2px]">THOÁT</button>
+    <!-- MODAL ZOOM ẢNH -->
+    <Transition name="fade">
+      <div v-if="selectedImage" @click="closeImage" class="fixed inset-0 z-[6000] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md cursor-zoom-out">
+        <button @click.stop="closeImage" class="absolute top-6 right-6 md:top-10 md:right-10 w-12 h-12 bg-slate-800 border border-slate-700 hover:bg-red-600 rounded-full flex items-center justify-center text-white transition-colors z-[6010] shadow-2xl">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <img :src="selectedImage" @click.stop class="max-w-full max-h-[90vh] rounded-2xl object-contain shadow-[0_0_50px_rgba(0,0,0,0.5)] relative z-[6005] cursor-default" />
+      </div>
+    </Transition>
+
+    <div class="flex justify-between items-center mb-10">
+      <h1 class="text-3xl md:text-5xl text-white tracking-tighter leading-none">
+        HỆ THỐNG <span class="text-blue-500">ADMIN</span>
+      </h1>
+      <button @click="handleAdminLogout" class="bg-slate-800 text-white px-6 py-2 rounded-xl text-[10px] hover:bg-red-600 transition-colors">THOÁT</button>
     </div>
 
-    <!-- BẢNG DANH SÁCH -->
-    <div class="bg-[#111726] rounded-[30px] border border-slate-800/50 overflow-hidden shadow-2xl">
+    <!-- BẢNG DANH SÁCH ĐƠN NỘP -->
+    <div class="bg-[#111726] border border-slate-800 rounded-[30px] overflow-hidden shadow-2xl">
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
-          <thead class="text-slate-500 text-[10px] tracking-[4px] bg-[#0d121f]">
-            <tr>
-              <th class="p-6">KHÁCH HÀNG</th>
-              <th class="p-6">CÔNG VIỆC</th>
-              <th class="p-6">BẰNG CHỨNG</th> <!-- Sửa tiêu đề cho ngầu -->
-              <th class="p-6 text-center">TRẠNG THÁI</th>
-              <th class="p-6 text-right">HÀNH ĐỘNG</th>
+          <thead>
+            <tr class="bg-[#0d121f] text-blue-500 text-[10px] tracking-[2px] border-b border-slate-800">
+              <th class="p-6 min-w-[250px]">NGƯỜI NỘP / TÀI KHOẢN</th>
+              <th class="p-6 min-w-[150px]">CÔNG VIỆC</th>
+              <th class="p-6 text-center min-w-[150px]">BẰNG CHỨNG</th>
+              <th class="p-6 text-center min-w-[120px]">TRẠNG THÁI</th>
+              <th class="p-6 text-right min-w-[200px]">HÀNH ĐỘNG</th>
             </tr>
           </thead>
-          <tbody class="text-white text-sm">
-            <tr v-for="r in reports" :key="r.id" class="border-b border-slate-800/30 hover:bg-blue-600/5 transition-all">
+          
+          <tbody class="divide-y divide-slate-800/50">
+            <tr v-for="rp in reports" :key="rp.id" class="hover:bg-white/[0.02] transition-colors group">
               
-              <!-- KHÁCH HÀNG -->
+              <!-- CỘT 1: CHỐNG FAKE BẰNG CHỨNG -->
               <td class="p-6">
-                <!-- Sửa biến phone cũ thành phoneRef theo đúng code trang nộp -->
-                <p class="text-blue-400 font-black tracking-tight text-base">{{ r.phoneRef || 'N/A' }}</p>
-                <p class="text-[9px] text-slate-600 lowercase italic normal-case tracking-wider mt-1">{{ r.uid?.slice(0, 10) }}...</p>
-              </td>
-
-              <!-- CÔNG VIỆC -->
-              <td class="p-6">
-                <p class="text-xs text-slate-300">{{ r.jobName }}</p>
-                <p class="text-[12px] text-emerald-400 mt-1 tracking-tighter">+{{ r.reward?.toLocaleString() || 0 }}đ</p>
-              </td>
-
-              <!-- ẢNH BẰNG CHỨNG (HIỂN THỊ DẠNG MẢNG NHIỀU ẢNH) -->
-              <td class="p-6">
-                <div v-if="r.images && r.images.length > 0" class="flex flex-wrap gap-2">
-                  <img 
-                    v-for="(img, index) in r.images" 
-                    :key="index"
-                    :src="img" 
-                    @click="selectedImage = img"
-                    class="w-12 h-12 object-cover rounded-xl border border-slate-700 cursor-zoom-in hover:scale-110 hover:border-blue-500 transition-all shadow-md" 
-                    title="Bấm để phóng to"
-                  />
-                  <!-- Hiển thị số lượng ảnh nếu nhiều -->
-                  <div v-if="r.images.length > 0" class="w-full text-[8px] text-slate-500 mt-1 tracking-widest">{{ r.images.length }} ẢNH ĐÍNH KÈM</div>
+                <!-- Data từ bảng Users (Acc thật) -->
+                <div class="mb-2 pb-2 border-b border-slate-700/50">
+                  <span class="text-[9px] text-emerald-400 tracking-widest block mb-0.5">TÀI KHOẢN GỐC:</span>
+                  <div class="text-white text-sm md:text-base font-black truncate max-w-[200px]">
+                    {{ usersMap[rp.uid]?.username || usersMap[rp.uid]?.fullName || 'CHƯA CẬP NHẬT' }}
+                  </div>
+                  <div class="text-slate-400 text-[10px] mt-0.5 font-sans not-italic tracking-normal">
+                    SĐT ACC: {{ usersMap[rp.uid]?.phone || 'Không có' }}
+                  </div>
                 </div>
-                <span v-else class="text-[9px] text-slate-700 italic px-3 py-1 border border-slate-800 rounded-lg">KHÔNG CÓ ẢNH</span>
+                <!-- Data từ form nó tự điền -->
+                <div>
+                  <span class="text-[9px] text-blue-400 tracking-widest block mb-0.5">NỘI DUNG ĐƠN NỘP:</span>
+                  <div class="text-slate-300 text-xs font-black truncate max-w-[200px]">
+                    {{ rp.fullName || 'N/A' }}
+                  </div>
+                  <div class="text-slate-500 text-[10px] mt-0.5 font-sans not-italic tracking-normal">
+                    SĐT ĐƠN: {{ rp.phoneRef || 'Không có' }}
+                  </div>
+                </div>
               </td>
 
-              <!-- TRẠNG THÁI -->
-              <td class="p-6 text-center">
-                <span v-if="r.status === 'pending'" class="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 px-4 py-1.5 rounded-full text-[9px] tracking-[2px]">CHỜ DUYỆT</span>
-                <span v-if="r.status === 'approved'" class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 px-4 py-1.5 rounded-full text-[9px] tracking-[2px]">ĐÃ DUYỆT</span>
-                <span v-if="r.status === 'rejected'" class="bg-red-500/10 border border-red-500/20 text-red-500 px-4 py-1.5 rounded-full text-[9px] tracking-[2px]">BỊ HỦY</span>
+              <!-- CỘT 2 -->
+              <td class="p-6">
+                <div class="text-slate-300 text-[11px] leading-tight mb-1">{{ rp.jobName }}</div>
+                <div class="text-emerald-400 text-sm font-black">+{{ rp.reward?.toLocaleString() }}Đ</div>
               </td>
 
-              <!-- HÀNH ĐỘNG -->
-              <td class="p-6 text-right space-x-2">
-                <button @click="approveReport(r)" :disabled="r.status === 'approved'" class="bg-[#00df89] hover:bg-[#00c578] text-[#090e17] px-5 py-2.5 rounded-xl text-[10px] shadow-[0_5px_15px_rgba(0,223,137,0.2)] transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed">DUYỆT</button>
-                <button @click="rejectReport(r.id)" class="bg-[#ef4444] hover:bg-red-600 text-white px-5 py-2.5 rounded-xl text-[10px] transition-all active:scale-95">HỦY</button>
-                <button @click="deleteReport(r.id)" class="bg-slate-800 hover:bg-white hover:text-black text-white px-5 py-2.5 rounded-xl text-[10px] transition-all active:scale-95">XÓA</button>
+              <!-- CỘT 3: HÌNH ẢNH -->
+              <td class="p-6">
+                <div class="flex justify-center gap-2">
+                  <div v-for="(img, idx) in rp.images" :key="idx" class="relative cursor-pointer" @click="openImage(img)">
+                    <div class="block w-12 h-12 rounded-lg border border-slate-700 overflow-hidden hover:scale-110 hover:border-blue-500 transition-all shadow-lg">
+                      <img :src="img" class="w-full h-full object-cover" />
+                    </div>
+                  </div>
+                  <div v-if="!rp.images?.length" class="text-slate-700 text-[9px]">KHÔNG CÓ ẢNH</div>
+                </div>
               </td>
+
+              <!-- CỘT 4 -->
+              <td class="p-6 text-center text-[10px]">
+                <span v-if="rp.status === 'pending'" class="bg-yellow-500/10 text-yellow-500 px-3 py-1 rounded-full border border-yellow-500/20">ĐANG CHỜ</span>
+                <span v-else-if="rp.status === 'approved'" class="bg-emerald-500/10 text-emerald-500 px-3 py-1 rounded-full border border-emerald-500/20">ĐÃ DUYỆT</span>
+                <span v-else class="bg-red-500/10 text-red-500 px-3 py-1 rounded-full border border-red-500/20">BỊ HỦY</span>
+                <div v-if="rp.note" class="text-[8px] text-red-400 mt-1 italic normal-case">{{ rp.note }}</div>
+              </td>
+
+              <!-- CỘT 5 -->
+              <td class="p-6 text-right">
+                <div class="flex flex-col md:flex-row justify-end gap-2">
+                  <template v-if="rp.status === 'pending'">
+                    <button @click="approveReport(rp)" class="bg-emerald-500 hover:bg-emerald-400 text-white text-[9px] px-4 py-2 rounded-lg transition-all active:scale-95">DUYỆT</button>
+                    <button @click="rejectReport(rp.id)" class="bg-red-600 hover:bg-red-500 text-white text-[9px] px-4 py-2 rounded-lg transition-all active:scale-95">HỦY</button>
+                  </template>
+                  <button @click="deleteReport(rp.id)" class="bg-slate-800 text-slate-400 hover:text-white text-[9px] px-4 py-2 rounded-lg transition-all active:scale-95">XÓA</button>
+                </div>
+              </td>
+
             </tr>
           </tbody>
         </table>
       </div>
-    </div>
 
-    <!-- MODAL ZOOM ẢNH TRÀN MÀN HÌNH -->
-    <div 
-      v-if="selectedImage" 
-      @click="selectedImage = ''" 
-      class="fixed inset-0 z-[999] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 cursor-zoom-out animate-in fade-in duration-300"
-    >
-      <img 
-        :src="selectedImage" 
-        class="max-w-[95vw] max-h-[90vh] object-contain rounded-2xl shadow-[0_0_50px_rgba(59,130,246,0.2)] border border-white/10 animate-in zoom-in-95 duration-300" 
-      />
-      <div class="absolute top-6 right-6 text-white text-3xl opacity-50 hover:opacity-100 transition-opacity">✕</div>
-      <p class="absolute bottom-6 text-slate-500 text-[10px] tracking-[5px] bg-black/50 px-6 py-2 rounded-full backdrop-blur-md">BẤM BẤT KỲ ĐÂU ĐỂ ĐÓNG</p>
+      <div v-if="!isLoading && reports.length === 0" class="p-20 text-center text-slate-700 tracking-widest text-xs">
+        HIỆN CHƯA CÓ ĐƠN NÀO ĐƯỢC GỬI LÊN.
+      </div>
     </div>
-
   </div>
 </template>
 
 <style scoped>
-.normal-case { text-transform: none; }
+.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 </style>
